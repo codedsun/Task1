@@ -6,6 +6,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -25,19 +26,19 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private Retrofit retrofit;
     int permissionCheck;
+    RecyclerView.LayoutManager layoutManager;
     private static final String TAG="Log";
     private ArrayList<Country> countries;
     public static String BASE_URL="http://www.androidbegin.com";
     Call<WorldPopulation> worldPolpulationCall;
     FetchService fetchService;
-    Gson gson;
+    RecyclerViewAdapter recyclerViewAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         recyclerView = (RecyclerView) findViewById(R.id.imageRecylerView);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
+
 
         Thread t = new Thread(new Runnable() {
             @Override
@@ -52,13 +53,16 @@ public class MainActivity extends AppCompatActivity {
                  public void onResponse(Call<WorldPopulation> call, Response<WorldPopulation> response) {
                      Toast.makeText(MainActivity.this,"Data Fetched",Toast.LENGTH_LONG).show();
                      countries=response.body().getCountries();
-                     recyclerView.setAdapter(new RecyclerViewAdapter(MainActivity.this,countries));
+                     layoutManager = new GridLayoutManager(MainActivity.this,4);
+                     recyclerView.setLayoutManager(layoutManager);
+                     recyclerViewAdapter = new RecyclerViewAdapter(MainActivity.this,countries);
+                     recyclerView.setAdapter(recyclerViewAdapter);
 
                  }
 
                  @Override
                  public void onFailure(Call<WorldPopulation> call, Throwable t) {
-
+                     Toast.makeText(MainActivity.this, "Failure in Fetching Data", Toast.LENGTH_SHORT).show();
                  }
              });
 
@@ -71,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else
             t.run();
+
 
     }
 }

@@ -1,7 +1,9 @@
 package com.example.suneetsrivastava.task1;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +21,10 @@ public  class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapt
 
     private Context context;
     private ArrayList<Country> countries;
-
     RecyclerViewAdapter(Context c, ArrayList<Country> countries){
         this.context = c;
         this.countries = countries;
+
     }
 
     @Override
@@ -32,8 +34,18 @@ public  class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapt
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
           Picasso.with(context).load(countries.get(position).getFlag()).into(holder.imageView);
+          holder.imageView.setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View v) {
+                  Intent i = new Intent(context,ImageViewFull.class);
+                  i.putExtra("uri",countries.get(position).getFlag());
+                  context.startActivity(i);
+                  Log.e("TAG", "onClick: "+position );
+              }
+          });
+
     }
 
 
